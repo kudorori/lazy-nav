@@ -1,0 +1,96 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-selector/iron-selector.html">
+<link rel="import" href="../iron-location/iron-location.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<!--
+`lazy-nav`
+
+
+@demo demo/index.html 
+-->
+
+<dom-module id="lazy-nav">
+	<style include="iron-flex">
+		:host{
+			display:block;
+		}
+		:root{
+			--lazy-nav-link-selected:{
+				
+			};
+			--lazy-nav-link:{
+				
+			};
+			--lazy-nav-container:{
+				
+			};
+		}
+		:host a{
+			display:inline-block;
+			position: relative;
+			text-decoration: none;
+		    color:#000;
+		    @apply(--lazy-nav-link);
+		}
+		
+		:host a.iron-selected,a:hover{
+			@apply(--lazy-nav-link-selected);
+		}
+		:host iron-selector{
+			@apply(--lazy-nav-container)
+		}
+		
+	</style>
+	<template>
+		<iron-location hash="{{hash}}" url-space-regex="!(#\!)" ></iron-location>
+		<iron-selector class="layout horizontal center-justified" selected="[[bindTab(hash,tabs)]]">
+			<template is="dom-repeat" items="[[tabs]]">
+				<a href$="[[prefix]][[item.href]]" class$="[[item.class]]">
+					[[item.title]]
+				</a>
+			</template>
+		</iron-selector>
+	</template>
+	<script>
+		Polymer({
+			is:"lazy-nav",
+			properties:{
+				prefix:{
+					type:String,
+					value:"#!"
+				},
+				tabs:{
+					type:Object,
+					value:[
+						{
+							title:"新增訂單",
+							href:"/home/add"
+						},{
+							title:"訂單確認",
+							href:"/home/confirm",
+							class: "disabled"
+						},{
+							title:"訂單查詢",
+							href:"/home/search"
+						},{
+							title:"個人設定",
+							href:"/home/profile"
+						}
+					]
+				}
+			},
+			bindTab:function(hash,tabs){
+				var result = 0;
+				
+				for(var key in tabs){
+					var tab = tabs[key];
+					var reg = new RegExp(tab.href);
+					if(reg.test(hash)){
+						return key;
+					}
+				}
+				return result;
+			}
+		})
+	</script>
+</dom-module>
